@@ -4,6 +4,19 @@ const mongoose = require('mongoose')
 const admRouter = require('./routes/admRoter')
 const userRouter = require('./routes/userRouter')
 const app = express()
+const cors = require('cors')
+
+var whitelist = ['http://localhost:3000']
+
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
 
 // db connection
 mongoose.connect(
@@ -11,7 +24,15 @@ mongoose.connect(
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true
+}).then(()=>{
+    console.log('database connected')
+    app.emit('connected')
+}).catch(e => {
+    console.log(e)
 })
+
+// CORS Options
+app.use(cors(corsOptions))
 
 // User Router
 app.use('/user', express.json(), userRouter)
@@ -20,6 +41,8 @@ app.use('/user', express.json(), userRouter)
 app.use('/admin', express.json(), admRouter)
 
 // server listening at the port
-app.listen(process.env.PORT, () => {
-    console.log('Server Running')
+app.on('connected', () => {
+    app.listen(process.env.PORT, ()=>{
+        console.log('server Running in http://localhost:3000')
+    })
 })
