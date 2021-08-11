@@ -7,7 +7,7 @@ router.get('/', auth, (req, res) => {
     if(req.user.admin){
         res.send('Exclusive content for administrators')
     }else{
-        res.status(401).send('Access Denied')
+        res.status(401).send('NOT ADMIN: Access Denied')
     }
 })
 

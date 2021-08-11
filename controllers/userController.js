@@ -51,6 +51,14 @@ const userController = {
         res.header('authorization-token', token)
 
         res.send('User logged in')
+    },
+    find: async function(req, res) {
+        
+        const users = await User.find()
+        if(!users){
+            res.send('Não há usuários cadastrados no momento')
+        }
+        res.send(users)
     }
 }
 
